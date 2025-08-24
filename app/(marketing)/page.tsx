@@ -3,6 +3,10 @@ import Features from "@/components/Features";
 import Milestones from "@/components/Milestones";
 import CTA from "@/components/CTA";
 
+// Import SEO metadata for this page
+import { metadata } from "./metadata";
+export { metadata };
+
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-gray-950 text-white">
