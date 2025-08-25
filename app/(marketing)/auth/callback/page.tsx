@@ -1,37 +1,40 @@
+// app/(marketing)/auth/callback/page.tsx
 "use client";
 
-import { useEffect } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { useEffect, Suspense } from "react";
 
-export default function CallbackPage() {
+// This is the component that uses useSearchParams()
+function AuthCallback() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  const next = searchParams.get("next") || "/dashboard";
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
-    // If a code is found in the URL, exchange it for a session.
-    // This is the standard way to handle authentication callbacks.
     if (code) {
-      const exchangeCodeForSession = async () => {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.exchangeCodeForSession(code);
-
-        if (session && !error) {
-          router.push(next);
-        } else {
-          router.push("/auth?error=auth_failed");
-        }
+      const handleAuth = async () => {
+        await supabase.auth.exchangeCodeForSession(code);
+        router.push("/dashboard");
       };
-      exchangeCodeForSession();
-    } else {
-      // Fallback for cases where no code is present.
-      router.push("/auth?error=no_code");
+      handleAuth();
     }
-  }, [code, router, next]);
+  }, [code, router, supabase]);
 
-  return <p className="text-center mt-10">Authenticating...</p>;
+  // You can render a loading message or spinner here
+  return (
+    <div className="flex justify-center items-center min-h-screen">
+      <p>Logging you in...</p>
+    </div>
+  );
+}
+
+// Wrap the component with <Suspense>
+export default function CallbackPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthCallback />
+    </Suspense>
+  );
 }
