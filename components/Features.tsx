@@ -19,7 +19,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="py-16 bg-gray-900 text-center">
+    <section className="py-16 bg-gray-100 text-center text-gray-900 dark:bg-gray-900 dark:text-gray-200">
       <div className="container mx-auto px-6">
         {/* Section Title */}
         <Reveal direction="up">
@@ -30,9 +30,9 @@ export default function Features() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <Reveal key={index} direction="up" delay={index * 0.2}>
-              <div className="p-6 bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition">
+              <div className="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition dark:bg-gray-800">
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
+                <p className="text-gray-600 dark:text-gray-400">{feature.description}</p>
               </div>
             </Reveal>
           ))}

@@ -1,41 +1,11 @@
+// (app)/dashboard/page.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 import Reveal from "@/components/Reveal";
-import type { Metadata } from "next";
-
-// ✅ SEO + Open Graph Metadata
-export const metadata: Metadata = {
-  title: "Dashboard | VA Journey",
-  description:
-    "Track your progress, log daily reflections, and maintain your growth streak on your Virtual Assistant journey.",
-  openGraph: {
-    title: "Dashboard | VA Journey",
-    description:
-      "Stay consistent with your Virtual Assistant growth journey. Track daily logs, moods, and streaks.",
-    url: "https://va-journey.vercel.app/dashboard",
-    siteName: "VA Journey",
-    images: [
-      {
-        url: "https://va-journey.vercel.app/og-dashboard.png", // optional: add custom OG image
-        width: 1200,
-        height: 630,
-        alt: "VA Journey Dashboard",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Dashboard | VA Journey",
-    description:
-      "Your personal Virtual Assistant journey dashboard to stay on track and consistent.",
-    images: ["https://va-journey.vercel.app/og-dashboard.png"], // same as above
-  },
-};
+import { useAuth } from "@/context/AuthProvider"; // ✅ Import useAuth hook
 
 type Entry = {
   id: string;
@@ -47,27 +17,36 @@ type Entry = {
 };
 
 export default function DashboardPage() {
+  const { user } = useAuth(); // ✅ Get the authenticated user
   const [entries, setEntries] = useState<Entry[]>([]);
   const [note, setNote] = useState("");
   const [mood, setMood] = useState<Entry["mood"]>("💪");
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true); // ✅ Add a loading state
 
   // Load recent entries
   useEffect(() => {
     (async () => {
+      // ✅ Check if user is available
+      if (!user) return;
+      setLoading(true);
+
       const { data, error } = await supabase
         .from("entries")
         .select("*")
+        .eq("user_id", user.id) // ✅ Filter by the user's ID
         .order("date", { ascending: false })
         .limit(14);
+
       if (!error && data) setEntries(data as Entry[]);
+      setLoading(false);
     })();
-  }, []);
+  }, [user]); // ✅ Run effect when the user state changes
 
   const streak = useMemo(() => {
     const days = new Set(entries.map((e) => e.date));
     let s = 0;
-    let cursor = new Date();
+    const cursor = new Date();
     for (;;) {
       const iso = cursor.toISOString().split("T")[0];
       if (days.has(iso)) {
@@ -79,11 +58,13 @@ export default function DashboardPage() {
   }, [entries]);
 
   async function submitEntry() {
+    // ✅ Make sure user is available before submitting
+    if (!user) return;
     setSubmitting(true);
     const today = new Date().toISOString().split("T")[0];
     const { data, error } = await supabase
       .from("entries")
-      .insert([{ date: today, mood, note }])
+      .insert([{ date: today, mood, note, user_id: user.id }]) // ✅ Add user_id to the inserted data
       .select("*")
       .single();
 
@@ -92,6 +73,14 @@ export default function DashboardPage() {
       setEntries((prev) => [data as Entry, ...prev]);
       setNote("");
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-10">
+        <p>Loading your dashboard...</p>
+      </div>
+    );
   }
 
   return (
@@ -103,11 +92,11 @@ export default function DashboardPage() {
           transition={{ duration: 0.35 }}
           className="text-2xl sm:text-3xl font-semibold"
         >
-          Welcome back 👋 — Let’s keep the streak going
+          Welcome back, {user?.email}! 👋
         </motion.h1>
       </Reveal>
 
-      {/* Top cards */}
+      {/* Top cards - same as before */}
       <div className="grid sm:grid-cols-3 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -139,7 +128,7 @@ export default function DashboardPage() {
         </motion.div>
       </div>
 
-      {/* Quick log */}
+      {/* Quick log - same logic, but with user check */}
       <Reveal>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <h2 className="text-lg font-semibold mb-3">Log today’s progress</h2>
@@ -172,7 +161,7 @@ export default function DashboardPage() {
         </div>
       </Reveal>
 
-      {/* Recent entries */}
+      {/* Recent entries - same as before */}
       <Reveal>
         <div className="space-y-3">
           <h3 className="text-lg font-semibold">Recent Entries</h3>

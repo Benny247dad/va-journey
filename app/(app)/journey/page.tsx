@@ -1,6 +1,5 @@
 import { supabaseServer } from "@/lib/supabaseServer";
 import { redirect } from "next/navigation";
-import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default async function JourneyPage() {
   const supabase = supabaseServer();

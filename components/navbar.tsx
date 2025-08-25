@@ -1,30 +1,35 @@
+// components/navbar.tsx
 "use client";
 
 import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeToggle from "./theme-toggle";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthProvider";  
+import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthProvider";
+import { HiMenu, HiX } from "react-icons/hi"; // You'll need to install react-icons
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "Features", href: "/#features" },
-  { label: "Milestones", href: "/#milestones" },
   { label: "Journey", href: "/journey" },
-  { label: "Resources", href: "/resources" },
+  { label: "Services", href: "/services" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { user, signOut } = useAuth(); // ✅ get auth state
+  const pathname = usePathname();
+  const { user, signOut, loading } = useAuth(); // ✅ Get the loading state
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+    setOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-[998]">
-      {/* Glassy bar */}
       <div className="relative">
         <motion.nav
           initial={{ y: -20, opacity: 0 }}
@@ -49,14 +54,18 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition"
+                className={`text-gray-700 dark:text-gray-300 transition ${
+                  pathname === item.href
+                    ? "text-indigo-600 dark:text-indigo-400 font-bold"
+                    : "hover:text-indigo-600 dark:hover:text-indigo-400"
+                }`}
               >
                 {item.label}
               </Link>
             ))}
 
-            {/* Show dashboard ONLY if logged in */}
-            {user && (
+            {/* Show dashboard if logged in and not loading */}
+            {!loading && user && (
               <Link
                 href="/dashboard"
                 className="text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition"
@@ -71,20 +80,22 @@ export default function Navbar() {
             <ThemeToggle />
 
             {/* Logout and Login button (desktop) */}
-            {user ? (
-              <button
-                onClick={signOut}
-                className="rounded-lg px-3 py-2 text-sm bg-indigo-500 text-white hover:bg-indigo-600 transition"
-              >
-                Logout
-              </button>
-            ) : (
-              <Link
-                href="/auth"
-                className="rounded-lg px-3 py-2 text-sm bg-indigo-500 text-white hover:bg-indigo-600 transition"
-              >
-                Login
-              </Link>
+            {!loading && (
+              user ? (
+                <button
+                  onClick={handleSignOut}
+                  className="rounded-lg px-3 py-2 text-sm bg-indigo-500 text-white hover:bg-indigo-600 transition"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href="/auth"
+                  className="rounded-lg px-3 py-2 text-sm bg-indigo-500 text-white hover:bg-indigo-600 transition"
+                >
+                  Login
+                </Link>
+              )
             )}
 
             {/* Hamburger (mobile toggle) */}
@@ -93,9 +104,7 @@ export default function Navbar() {
               onClick={() => setOpen((v) => !v)}
               aria-label="Toggle menu"
             >
-              <span className="block h-0.5 w-5 bg-current mb-1"></span>
-              <span className="block h-0.5 w-5 bg-current mb-1"></span>
-              <span className="block h-0.5 w-5 bg-current"></span>
+              {open ? <HiX className="w-5 h-5 text-gray-900 dark:text-white" /> : <HiMenu className="w-5 h-5 text-gray-900 dark:text-white" />}
             </button>
           </div>
         </motion.nav>
@@ -124,8 +133,8 @@ export default function Navbar() {
                   </Link>
                 ))}
 
-                {/* Show Dashboard only if logged in */}
-                {user && (
+                {/* Show Dashboard only if logged in and not loading */}
+                {!loading && Boolean(user) && (
                   <Link
                     href="/dashboard"
                     onClick={() => setOpen(false)}
@@ -137,24 +146,23 @@ export default function Navbar() {
                 )}
 
                 {/* Login / Logout button (mobile) */}
-                {user ? (
-                  <button
-                    onClick={() => {
-                      signOut();
-                      setOpen(false);
-                    }}
-                    className="rounded-lg px-3 py-2 text-red-600 dark:text-red-400 hover:bg-black/5 dark:hover:bg-white/10 transition text-left"
-                  >
-                    Logout
-                  </button>
-                ) : (
-                  <Link
-                    href="/auth"
-                    onClick={() => setOpen(false)}
-                    className="rounded-lg px-3 py-2 bg-indigo-500 text-white hover:bg-indigo-600 transition text-center"
-                  >
-                    Login
-                  </Link>
+                {!loading && (
+                  user ? (
+                    <button
+                      onClick={handleSignOut}
+                      className="rounded-lg px-3 py-2 text-red-600 dark:text-red-400 hover:bg-black/5 dark:hover:bg-white/10 transition text-left"
+                    >
+                      Logout
+                    </button>
+                  ) : (
+                    <Link
+                      href="/auth"
+                      onClick={() => setOpen(false)}
+                      className="rounded-lg px-3 py-2 bg-indigo-500 text-white hover:bg-indigo-600 transition text-center"
+                    >
+                      Login
+                    </Link>
+                  )
                 )}
               </div>
             </motion.div>

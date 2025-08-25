@@ -1,10 +1,12 @@
+// context/AuthContext.tsx
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { User } from "@supabase/supabase-js"; // ✅ Import the User type
 
 type AuthContextType = {
-  user: any;
+  user: User | null; // ✅ Use the imported type
   loading: boolean;
   signOut: () => Promise<void>;
 };
@@ -12,7 +14,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null); // ✅ Use the imported type
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

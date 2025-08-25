@@ -1,9 +1,8 @@
+// app/(app)/profile/page.tsx
 import { motion } from "framer-motion";
 import Reveal from "@/components/Reveal";
 
-// Import SEO metadata
-import { metadata } from "./metadata";
-export { metadata };
+// ✅ Removed the metadata import because it's not needed for a protected page.
 
 export default function ProfilePage() {
   return (

@@ -1,3 +1,4 @@
+// app/(marketing)/about/page.tsx
 import Reveal from "@/components/Reveal";
 
 export default function AboutPage() {

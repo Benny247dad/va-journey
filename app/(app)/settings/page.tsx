@@ -1,9 +1,8 @@
+// app/(app)/settings/page.tsx
 import { motion } from "framer-motion";
 import Reveal from "@/components/Reveal";
 
-// Import SEO metadata
-import { metadata } from "./metadata";
-export { metadata };
+// ✅ The metadata import has been removed.
 
 export default function SettingsPage() {
   return (

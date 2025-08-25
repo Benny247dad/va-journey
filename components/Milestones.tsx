@@ -32,11 +32,11 @@ const milestones = [
 
 export default function Milestones() {
   return (
-    <section className="py-16 bg-gray-950">
+    <section className="py-16 bg-white dark:bg-gray-950">
       <div className="container mx-auto px-6">
         {/* Section Title */}
         <Reveal direction="up">
-          <h2 className="text-3xl font-bold text-center mb-10">
+          <h2 className="text-3xl font-bold text-center mb-10 text-gray-900 dark:text-white">
             Journey Milestones
           </h2>
         </Reveal>
@@ -45,11 +45,11 @@ export default function Milestones() {
         <div className="space-y-8">
           {milestones.map((milestone, index) => (
             <Reveal key={index} direction="left" delay={index * 0.2}>
-              <div className="p-6 bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition">
-                <h3 className="text-xl font-semibold mb-2">
+              <div className="p-6 bg-gray-100 rounded-2xl shadow-md hover:shadow-lg transition dark:bg-gray-800">
+                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
                   {milestone.day} – {milestone.title}
                 </h3>
-                <p className="text-gray-400">{milestone.description}</p>
+                <p className="text-gray-600 dark:text-gray-400">{milestone.description}</p>
               </div>
             </Reveal>
           ))}

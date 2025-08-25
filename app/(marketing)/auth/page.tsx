@@ -28,7 +28,8 @@ export default function AuthPage() {
         });
         if (error) throw error;
 
-        router.push("/"); // redirect to homepage after login
+        // ✅ Redirect to the dashboard after successful login
+        router.push("/dashboard"); 
       } else {
         // Signup
         const { error } = await supabase.auth.signUp({

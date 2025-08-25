@@ -1,25 +1,39 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { ReactNode } from "react";
 
-export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+interface ProtectedRouteProps {
+  children: ReactNode;
+}
+
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { user, loading } = useAuth();
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
-    // delay until user state is known
-    if (user === null) {
-      router.push("/auth"); // redirect if not logged in
+    // Only run this effect after the initial loading state is resolved
+    if (!loading) {
+      // If there's no user and the current path is NOT the auth page
+      if (!user && pathname !== "/auth") {
+        // Redirect to the login page
+        router.push("/auth");
+      }
     }
-    setChecking(false);
-  }, [user, router]);
+  }, [user, loading, router, pathname]);
 
-  if (checking) {
-    return <p className="text-center mt-10">Loading...</p>;
+  // While loading, show a simple message or a spinner
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
+  // If a user is logged in, render the children
   return <>{children}</>;
 }

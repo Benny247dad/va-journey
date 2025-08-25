@@ -1,59 +1,26 @@
-import "./globals.css";
-import type { Metadata } from "next";
+// app/(marketing)/layout.tsx
 import { ReactNode } from "react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import ScrollProgress from "@/components/scroll-progress";
-import { AuthProvider } from "@/context/AuthProvider";// ✅ make sure this matches the filename
+// AuthProvider is not needed for public pages.
 
-// Define metadata for the application
-export const metadata: Metadata = {
-  title: "VA Journey",
-  description: "Portfolio & Journey site",
-};
-
-// Define props type for RootLayout
-interface RootLayoutProps {
+// Define props type for the nested layout
+interface MarketingLayoutProps {
   children: ReactNode;
 }
 
-// RootLayout component
-export default function RootLayout({ children }: RootLayoutProps) {
+// Nested Layout component for the (marketing) route group
+export default function MarketingLayout({ children }: MarketingLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Set theme before hydration to avoid flicker */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const stored = localStorage.getItem('theme');
-                  const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                  const theme = stored || system;
-                  if (theme === 'dark') document.documentElement.classList.add('dark');
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body className="font-sans antialiased bg-background text-foreground">
-        {/* AuthProvider wraps the entire app for authentication context */}
-        <AuthProvider>
-          {/* Sticky progress bar at the top */}
-          <ScrollProgress />
-
-          {/* Main navigation */}
-          <Navbar />
-
-          {/* Page content */}
-          <main className="pt-6">{children}</main>
-
-          {/* Footer */}
-          <Footer />
-        </AuthProvider>
-      </body>
-    </html>
+    // No <html> or <body> tags here. They are in the root layout.
+    <>
+      <ScrollProgress />
+      <Navbar />
+      <main className="pt-6">
+        {children}
+      </main>
+      <Footer />
+    </>
   );
 }

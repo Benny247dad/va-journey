@@ -1,23 +1,29 @@
+// context/AuthProvider.tsx
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { User } from "@supabase/supabase-js"; // ✅ Import the User type
 
 type AuthContextType = {
-  user: any;
+  user: User | null; // ✅ Change from 'unknown' to 'User | null'
+  loading: boolean;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
+export default function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null); // ✅ Change from 'unknown' to 'User | null'
+  const [loading, setLoading] = useState(true);
 
-  // Listen for auth changes
+  // ... rest of your code ...
+
   useEffect(() => {
     // Get current user on load
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user || null);
+      setLoading(false);
     });
 
     // Subscribe to changes
@@ -25,6 +31,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
+      if (loading) {
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -36,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );

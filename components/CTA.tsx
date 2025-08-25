@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
 
 export default function CTA() {
   return (
-    <section className="py-20 bg-gradient-to-r from-purple-700 to-indigo-700 text-white">
+    <section className="py-20 bg-gradient-to-r from-purple-100 to-indigo-100 text-gray-900 dark:bg-gradient-to-r dark:from-purple-700 dark:to-indigo-700 dark:text-white">
       <div className="container mx-auto px-6 text-center">
         {/* Heading */}
         <Reveal direction="up">
@@ -15,20 +16,20 @@ export default function CTA() {
 
         {/* Description */}
         <Reveal direction="up" delay={0.2}>
-          <p className="text-lg text-gray-200 mb-8">
-            Follow along as I build this project step by step.  
+          <p className="text-lg mb-8">
+            Follow along as I build this project step by step. 
             Let’s grow, learn, and achieve milestones together!
           </p>
         </Reveal>
 
         {/* Call to Action Button */}
         <Reveal direction="up" delay={0.4}>
-          <a
-            href="#"
+          <Link
+            href="/auth" 
             className="px-6 py-3 bg-white text-purple-700 font-semibold rounded-full shadow-lg hover:bg-gray-100 transition"
           >
-            Follow My Progress
-          </a>
+            Start Your Journey
+          </Link>
         </Reveal>
       </div>
     </section>
