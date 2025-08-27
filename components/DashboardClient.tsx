@@ -42,7 +42,6 @@ export default function DashboardClient() {
           <h1 className="text-4xl font-bold mb-8 text-center text-gray-900 dark:text-white">
             My Dashboard
           </h1>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Progress Visualization */}
             <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
@@ -54,13 +53,14 @@ export default function DashboardClient() {
                 You have completed **{completedDays}** of your 100-day journey!
               </p>
             </div>
-
             {/* Log Entry Form */}
             <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Log New Entry
               </h2>
-              <LogEntryForm onEntryLogged={() => setCompletedDays(prev => prev + 1)} />
+              <LogEntryForm
+                onEntryLogged={() => setCompletedDays((prev) => prev + 1)}
+              />
             </div>
           </div>
         </div>
