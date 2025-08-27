@@ -16,7 +16,7 @@ interface Entry {
   description: string;
 }
 
-export default function DashboardClient() {
+export default function DashboardContainer() {
   const { user, loading } = useAuth();
   const [completedDays, setCompletedDays] = useState(0);
   const [userEntries, setUserEntries] = useState<Entry[]>([]);
@@ -48,7 +48,6 @@ export default function DashboardClient() {
     }
   }, [user]);
 
-  // This function is passed to the LogEntryForm to update the UI after a new entry is logged.
   const handleEntryLogged = async () => {
     // This check is also crucial to prevent errors.
     if (user) {
@@ -65,7 +64,6 @@ export default function DashboardClient() {
     }
   };
 
-  // Show a loading screen or redirect if the user is not authenticated.
   if (loading || !user) {
     return (
       <ProtectedRoute>
@@ -84,7 +82,6 @@ export default function DashboardClient() {
             My Dashboard
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {/* Progress Visualization */}
             <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Progress
@@ -94,7 +91,6 @@ export default function DashboardClient() {
                 You have completed **{completedDays}** of your 100-day journey!
               </p>
             </div>
-            {/* Log Entry Form and User Entries */}
             <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Log New Entry
