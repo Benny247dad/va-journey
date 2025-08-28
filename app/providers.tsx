@@ -1,12 +1,16 @@
+// app/providers.tsx
 "use client";
 
-import { ThemeProvider } from "next-themes";
-import { ReactNode } from "react";
+import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "react-hot-toast";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-export function Providers({ children }: { children: ReactNode }) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <AuthProvider>
       {children}
-    </ThemeProvider>
+      <Toaster position="top-center" />
+      <SpeedInsights />
+    </AuthProvider>
   );
 }

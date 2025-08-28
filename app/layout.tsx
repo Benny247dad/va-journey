@@ -1,16 +1,12 @@
 // app/layout.tsx
-
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-// ✅ Corrected: Import Providers as a default export from the app directory
-import { Providers } from "@/app/providers";
-// ✅ Corrected: Import AuthProvider as a named export
-import { AuthProvider } from "@/context/AuthContext";
-import { Toaster } from "react-hot-toast";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import Providers from "@/app/providers";
+import Footer from "@/components/footer"; // ✅ Import the new Footer component
 
 export const metadata: Metadata = {
+  // ... (existing metadata)
   metadataBase: new URL("https://va-journey.vercel.app/"),
   title: "VA Journey | 100-Day Virtual Assistant Tracker",
   description: "Track your 100-day journey to becoming a professional Virtual Assistant. Log daily entries, monitor progress, and achieve your goals with our intuitive dashboard.",
@@ -56,14 +52,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`h-full ${inter.className}`}>
-        {/* ✅ The Providers component wraps AuthProvider and children */}
+      <body className={`h-full flex flex-col ${inter.className}`}>
         <Providers>
-          <AuthProvider>
-            {children}
-            <Toaster position="top-center" />
-            <SpeedInsights />
-          </AuthProvider>
+          {children}
+          <div className="flex-grow"></div>
+          <Footer /> {/* ✅ Add the Footer component here */}
         </Providers>
       </body>
     </html>
