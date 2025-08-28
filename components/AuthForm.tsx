@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { BeatLoader } from "react-spinners"; // ✅ Added for loading spinner
 
 export default function AuthForm() {
   const [isSigningUp, setIsSigningUp] = useState(false);
@@ -81,9 +82,14 @@ export default function AuthForm() {
         {isSigningUp ? "Create Your Account" : "Welcome Back"}
       </h2>
 
-      <form onSubmit={isSigningUp ? handleSignUp : handleLogin} className="space-y-6">
+      <form
+        onSubmit={isSigningUp ? handleSignUp : handleLogin}
+        className="space-y-6"
+      >
         <div>
-          <label htmlFor="email" className="sr-only">Email address</label>
+          <label htmlFor="email" className="sr-only">
+            Email address
+          </label>
           <input
             id="email"
             name="email"
@@ -99,7 +105,9 @@ export default function AuthForm() {
         </div>
 
         <div>
-          <label htmlFor="password" className="sr-only">Password</label>
+          <label htmlFor="password" className="sr-only">
+            Password
+          </label>
           <input
             id="password"
             name="password"
@@ -117,7 +125,10 @@ export default function AuthForm() {
         {!isSigningUp && (
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <Link href="#" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+              <Link
+                href="#"
+                className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+              >
                 Forgot your password?
               </Link>
             </div>
@@ -131,7 +142,13 @@ export default function AuthForm() {
           disabled={loading}
           className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          {loading ? (isSigningUp ? "Signing Up..." : "Logging In...") : (isSigningUp ? "Sign Up" : "Log In")}
+          {loading ? (
+            <BeatLoader size={12} color="#ffffff" />
+          ) : isSigningUp ? (
+            "Sign Up"
+          ) : (
+            "Log In"
+          )}
         </motion.button>
       </form>
 
@@ -155,7 +172,7 @@ export default function AuthForm() {
             disabled={loading || !email}
             className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm text-lg font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            Magic Link
+            {loading ? <BeatLoader size={12} color="#4F46E5" /> : "Magic Link"}
           </motion.button>
         </div>
       </div>

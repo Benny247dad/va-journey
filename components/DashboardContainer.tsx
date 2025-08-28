@@ -6,8 +6,10 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import LogEntryForm from "@/components/LogEntryForm";
 import JourneyProgress from "@/components/JourneyProgress";
 import UserEntries from "@/components/UserEntries";
+import BackButton from "@/components/BackButton"; // ✅ Import BackButton
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { motion } from "framer-motion"; // ✅ Import motion for animations
 
 interface Entry {
   id: string;
@@ -32,8 +34,8 @@ export default function DashboardContainer() {
         .from("entries")
         .select("id, created_at, day, title, description", { count: "exact" })
         .eq("user_id", user.id);
-
-      setUserEntries((data as Entry[]) || []);
+      
+      setUserEntries(data as Entry[] || []);
       setCompletedDays(count || 0);
 
       channel
@@ -47,11 +49,10 @@ export default function DashboardContainer() {
           },
           (payload) => {
             const newEntry = payload.new as Entry;
-            setUserEntries((prevEntries) => [...prevEntries, newEntry]);
-            setCompletedDays((prevDays) => prevDays + 1);
+            setUserEntries(prevEntries => [...prevEntries, newEntry]);
+            setCompletedDays(prevDays => prevDays + 1);
           }
         )
-        // ✅ Add listener for DELETE events
         .on(
           "postgres_changes",
           {
@@ -62,10 +63,8 @@ export default function DashboardContainer() {
           },
           (payload) => {
             const deletedEntry = payload.old as { id: string };
-            setUserEntries((prevEntries) =>
-              prevEntries.filter((entry) => entry.id !== deletedEntry.id)
-            );
-            setCompletedDays((prevDays) => prevDays - 1);
+            setUserEntries(prevEntries => prevEntries.filter(entry => entry.id !== deletedEntry.id));
+            setCompletedDays(prevDays => prevDays - 1);
           }
         )
         .subscribe();
@@ -88,33 +87,70 @@ export default function DashboardContainer() {
     );
   }
 
+  // Animation variants for section fade-in
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-100 py-12 dark:bg-gray-950 dark:text-gray-200">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-8 text-center text-gray-900 dark:text-white">
-            My Dashboard
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={sectionVariants}
+        className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
+      >
+        <div className="max-w-7xl mx-auto">
+          {/* Back Button */}
+          <div className="mb-8">
+            <BackButton targetPath="/" label="Back to Home" /> {/* ✅ Integrated BackButton */}
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-10 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-300 dark:to-purple-400">
+            My VA Journey Dashboard
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-                Progress
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            {/* Progress Visualization */}
+            <motion.div
+              variants={sectionVariants}
+              className="lg:col-span-1 bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:shadow-2xl"
+            >
+              <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+                Progress Overview
               </h2>
               <JourneyProgress completedDays={completedDays} />
-              <p className="mt-4 text-center text-gray-700 dark:text-gray-300">
-                You have completed **{completedDays}** of your 100-day journey!
+              <p className="mt-6 text-center text-lg text-gray-700 dark:text-gray-300 font-medium">
+                You have completed{" "}
+                <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">
+                  {completedDays}
+                </span>{" "}
+                of your 100-day journey!
               </p>
-            </div>
-            <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
+            </motion.div>
+
+            {/* Log Entry Form */}
+            <motion.div
+              variants={sectionVariants}
+              className="lg:col-span-2 bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:shadow-2xl"
+            >
+              <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
                 Log New Entry
               </h2>
               <LogEntryForm />
-            </div>
-            <UserEntries entries={userEntries} />
+            </motion.div>
           </div>
+
+          {/* User Entries List */}
+          <motion.div
+            variants={sectionVariants}
+            className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:shadow-2xl"
+          >
+            <UserEntries entries={userEntries} />
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </ProtectedRoute>
   );
 }
