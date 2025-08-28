@@ -1,4 +1,3 @@
-// components/navbar.tsx
 "use client";
 
 import Link from "next/link";
@@ -6,8 +5,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeToggle from "./theme-toggle";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/context/AuthContext"; // ✅ Correct import path
-import { HiMenu, HiX } from "react-icons/hi"; // You'll need to install react-icons
+import { useAuth } from "@/context/AuthContext";
+import { HiMenu, HiX } from "react-icons/hi";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -20,7 +19,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { user, signOut, loading } = useAuth(); // ✅ Get the loading state
+  const { user, signOut, loading } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
@@ -63,8 +62,6 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
-
-            {/* Show dashboard if logged in and not loading */}
             {!loading && user && (
               <Link
                 href="/dashboard"
@@ -78,8 +75,6 @@ export default function Navbar() {
           {/* Right controls */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
-
-            {/* Logout and Login button (desktop) */}
             {!loading && (
               user ? (
                 <button
@@ -97,8 +92,6 @@ export default function Navbar() {
                 </Link>
               )
             )}
-
-            {/* Hamburger (mobile toggle) */}
             <button
               className="md:hidden rounded-lg p-2 hover:bg-black/5 dark:hover:bg-white/10"
               onClick={() => setOpen((v) => !v)}
@@ -108,8 +101,6 @@ export default function Navbar() {
             </button>
           </div>
         </motion.nav>
-
-        {/* Mobile sheet */}
         <AnimatePresence>
           {open && (
             <motion.div
@@ -118,7 +109,7 @@ export default function Navbar() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.18 }}
               className="md:hidden bg-white/80 dark:bg-gray-900/80 backdrop-blur
-                         border-b border-black/5 dark:border-white/10"
+                          border-b border-black/5 dark:border-white/10"
             >
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 grid gap-2">
                 {navItems.map((item) => (
@@ -127,25 +118,21 @@ export default function Navbar() {
                     href={item.href}
                     onClick={() => setOpen(false)}
                     className="rounded-lg px-3 py-2 text-gray-800 hover:bg-black/5
-                               dark:text-gray-200 dark:hover:bg-white/10 transition"
+                                 dark:text-gray-200 dark:hover:bg-white/10 transition"
                   >
                     {item.label}
                   </Link>
                 ))}
-
-                {/* Show Dashboard only if logged in and not loading */}
                 {!loading && Boolean(user) && (
                   <Link
                     href="/dashboard"
                     onClick={() => setOpen(false)}
                     className="rounded-lg px-3 py-2 text-gray-800 hover:bg-black/5
-                               dark:text-gray-200 dark:hover:bg-white/10 transition"
+                                 dark:text-gray-200 dark:hover:bg-white/10 transition"
                   >
                     Dashboard
                   </Link>
                 )}
-
-                {/* Login / Logout button (mobile) */}
                 {!loading && (
                   user ? (
                     <button
