@@ -34,8 +34,8 @@ export default function DashboardContainer() {
         .from("entries")
         .select("id, created_at, day, title, description", { count: "exact" })
         .eq("user_id", user.id);
-      
-      setUserEntries(data as Entry[] || []);
+
+      setUserEntries((data as Entry[]) || []);
       setCompletedDays(count || 0);
 
       channel
@@ -49,8 +49,8 @@ export default function DashboardContainer() {
           },
           (payload) => {
             const newEntry = payload.new as Entry;
-            setUserEntries(prevEntries => [...prevEntries, newEntry]);
-            setCompletedDays(prevDays => prevDays + 1);
+            setUserEntries((prevEntries) => [...prevEntries, newEntry]);
+            setCompletedDays((prevDays) => prevDays + 1);
           }
         )
         .on(
@@ -63,8 +63,10 @@ export default function DashboardContainer() {
           },
           (payload) => {
             const deletedEntry = payload.old as { id: string };
-            setUserEntries(prevEntries => prevEntries.filter(entry => entry.id !== deletedEntry.id));
-            setCompletedDays(prevDays => prevDays - 1);
+            setUserEntries((prevEntries) =>
+              prevEntries.filter((entry) => entry.id !== deletedEntry.id)
+            );
+            setCompletedDays((prevDays) => prevDays - 1);
           }
         )
         .subscribe();
@@ -104,7 +106,8 @@ export default function DashboardContainer() {
         <div className="max-w-7xl mx-auto">
           {/* Back Button */}
           <div className="mb-8">
-            <BackButton targetPath="/" label="Back to Home" /> {/* ✅ Integrated BackButton */}
+            <BackButton targetPath="/" label="Back to Home" />{" "}
+            {/* ✅ Integrated BackButton */}
           </div>
 
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-10 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-300 dark:to-purple-400">
