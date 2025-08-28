@@ -1,7 +1,6 @@
 // app/(marketing)/layout.tsx
 import { ReactNode } from "react";
 import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
 import ScrollProgress from "@/components/scroll-progress";
 // AuthProvider is not needed for public pages.
 
@@ -17,10 +16,7 @@ export default function MarketingLayout({ children }: MarketingLayoutProps) {
     <>
       <ScrollProgress />
       <Navbar />
-      <main className="pt-6">
-        {children}
-      </main>
-      <Footer />
+      <main className="pt-6">{children}</main>
     </>
   );
 }
