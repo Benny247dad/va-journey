@@ -1,3 +1,4 @@
+// components/CTA.tsx
 "use client";
 
 import Link from "next/link";
@@ -25,7 +26,7 @@ export default function CTA() {
         {/* Call to Action Button */}
         <Reveal direction="up" delay={0.4}>
           <Link
-            href="/auth" 
+            href="/login" // ✅ This is the corrected line
             className="px-6 py-3 bg-white text-purple-700 font-semibold rounded-full shadow-lg hover:bg-gray-100 transition"
           >
             Start Your Journey
