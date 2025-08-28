@@ -3,17 +3,25 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/app/providers";
-import Footer from "@/components/footer"; // ✅ Import the new Footer component
+import Footer from "@/components/footer"; // Corrected import path: 'Footer' with capital 'F'
 
 export const metadata: Metadata = {
-  // ... (existing metadata)
   metadataBase: new URL("https://va-journey.vercel.app/"),
   title: "VA Journey | 100-Day Virtual Assistant Tracker",
-  description: "Track your 100-day journey to becoming a professional Virtual Assistant. Log daily entries, monitor progress, and achieve your goals with our intuitive dashboard.",
-  keywords: ["virtual assistant", "VA", "100-day journey", "productivity app", "goal tracker", "personal development"],
+  description:
+    "Track your 100-day journey to becoming a professional Virtual Assistant. Log daily entries, monitor progress, and achieve your goals with our intuitive dashboard.",
+  keywords: [
+    "virtual assistant",
+    "VA",
+    "100-day journey",
+    "productivity app",
+    "goal tracker",
+    "personal development",
+  ],
   openGraph: {
     title: "VA Journey | Your 100-Day VA Challenge",
-    description: "Follow and log your 100-day journey to becoming a professional Virtual Assistant. Achieve consistency, growth, and excellence with our dedicated tracker.",
+    description:
+      "Follow and log your 100-day journey to becoming a professional Virtual Assistant. Achieve consistency, growth, and excellence with our dedicated tracker.",
     url: "https://va-journey.vercel.app/",
     siteName: "VA Journey",
     images: "/images/og-image.png",
@@ -23,7 +31,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "VA Journey",
-    description: "Log your 100-day journey to becoming a professional Virtual Assistant.",
+    description:
+      "Log your 100-day journey to becoming a professional Virtual Assistant.",
     creator: "@yourtwitterhandle",
     images: "/images/og-image.png",
   },
@@ -55,8 +64,9 @@ export default function RootLayout({
       <body className={`h-full flex flex-col ${inter.className}`}>
         <Providers>
           {children}
+          {/* This div ensures the content pushes the footer to the bottom */}
           <div className="flex-grow"></div>
-          <Footer /> {/* ✅ Add the Footer component here */}
+          <Footer />
         </Providers>
       </body>
     </html>
