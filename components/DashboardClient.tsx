@@ -83,7 +83,7 @@ export default function DashboardClient() {
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Log New Entry
               </h2>
-              <LogEntryForm onEntryLogged={handleEntryLogged} />
+              <LogEntryForm />
             </div>
             <UserEntries entries={userEntries} />
           </div>

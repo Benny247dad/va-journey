@@ -1,3 +1,4 @@
+// components/DashboardContainer.tsx
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
@@ -17,55 +18,59 @@ interface Entry {
 }
 
 export default function DashboardContainer() {
-  const { user } = useAuth(); // `loading` is handled by ProtectedRoute
+  const { user, loading } = useAuth();
   const [completedDays, setCompletedDays] = useState(0);
   const [userEntries, setUserEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
-    // This check prevents the code from running when user is null.
-    if (user) {
-      // Fetch the total number of completed days for the progress bar.
-      const fetchCompletedDays = async () => {
-        const { count } = await supabase
-          .from("entries")
-          .select("id", { count: "exact" })
-          .eq("user_id", user.id);
-        setCompletedDays(count || 0);
-      };
+    if (!user) return;
 
-      // Fetch the user's entries to display in the list.
-      const fetchUserEntries = async () => {
-        const { data } = await supabase
-          .from("entries")
-          .select("id, created_at, day, title, description")
-          .order("day", { ascending: true })
-          .eq("user_id", user.id);
-        setUserEntries((data as Entry[]) || []);
-      };
+    const channel = supabase.channel(`entries_for_user_${user.id}`);
 
-      fetchCompletedDays();
-      fetchUserEntries();
-    }
+    const fetchDataAndListen = async () => {
+      const { data, count } = await supabase
+        .from("entries")
+        .select("id, created_at, day, title, description", { count: "exact" })
+        .eq("user_id", user.id);
+      
+      setUserEntries(data as Entry[] || []);
+      setCompletedDays(count || 0);
+
+      channel
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "entries",
+            filter: `user_id=eq.${user.id}`,
+          },
+          (payload) => {
+            const newEntry = payload.new as Entry;
+            setUserEntries(prevEntries => [...prevEntries, newEntry]);
+            setCompletedDays(prevDays => prevDays + 1);
+          }
+        )
+        .subscribe();
+    };
+
+    fetchDataAndListen();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
-  const handleEntryLogged = async () => {
-    // This check is also crucial to prevent errors.
-    if (user) {
-      // Re-fetch the entries to update the list.
-      const { data } = await supabase
-        .from("entries")
-        .select("id, created_at, day, title, description")
-        .order("day", { ascending: true })
-        .eq("user_id", user.id);
-      setUserEntries((data as Entry[]) || []);
+  if (loading || !user) {
+    return (
+      <ProtectedRoute>
+        <div className="flex justify-center items-center min-h-screen">
+          <p>Loading...</p>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
-      // Update the completed days count.
-      setCompletedDays((prev) => prev + 1);
-    }
-  };
-
-  // ✅ The ProtectedRoute component is now used to wrap the content.
-  // It will handle all the loading and authentication checks internally.
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-100 py-12 dark:bg-gray-950 dark:text-gray-200">
@@ -74,7 +79,6 @@ export default function DashboardContainer() {
             My Dashboard
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {/* Progress Visualization */}
             <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Progress
@@ -84,12 +88,12 @@ export default function DashboardContainer() {
                 You have completed **{completedDays}** of your 100-day journey!
               </p>
             </div>
-            {/* Log Entry Form and User Entries */}
             <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Log New Entry
               </h2>
-              <LogEntryForm onEntryLogged={handleEntryLogged} />
+              {/* ✅ This is the corrected line */}
+              <LogEntryForm />
             </div>
             <UserEntries entries={userEntries} />
           </div>

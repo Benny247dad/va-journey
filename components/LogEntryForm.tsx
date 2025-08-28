@@ -1,12 +1,11 @@
-// components/LogEntryForm.tsx
 "use client";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/lib/supabaseClient";
-import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
+import { logEntryAction } from "@/app/actions";
+import toast from "react-hot-toast"; // ✅ Import the toast library
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
@@ -16,10 +15,8 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function LogEntryForm({ onEntryLogged }: { onEntryLogged: () => void }) {
-  const { user } = useAuth();
+export default function LogEntryForm() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const {
     register,
@@ -30,35 +27,25 @@ export default function LogEntryForm({ onEntryLogged }: { onEntryLogged: () => v
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = async (data: FormData) => {
-    if (!user) {
-      setError("You must be logged in to submit.");
-      return;
-    }
-
+  const handleClientSubmit = async (data: FormData) => {
     setLoading(true);
-    setError("");
 
-    const { error: supabaseError } = await supabase
-      .from("entries")
-      .insert({
-        ...data,
-        user_id: user.id,
-      });
-
+    const result = await logEntryAction(data);
     setLoading(false);
 
-    if (supabaseError) {
-      setError(supabaseError.message);
+    // ✅ Use toast for a better user experience
+    if (result?.error) {
+      toast.error(result.error);
     } else {
+      toast.success("Entry logged successfully!");
       reset();
-      onEntryLogged();
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+    <form onSubmit={handleSubmit(handleClientSubmit)} className="space-y-4">
+      {/* ❌ Remove the old error message display.
+      The toast handles it now. */}
       <div>
         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Day Number</label>
         <input
