@@ -32,8 +32,8 @@ export default function DashboardContainer() {
         .from("entries")
         .select("id, created_at, day, title, description", { count: "exact" })
         .eq("user_id", user.id);
-      
-      setUserEntries(data as Entry[] || []);
+
+      setUserEntries((data as Entry[]) || []);
       setCompletedDays(count || 0);
 
       channel
@@ -47,8 +47,25 @@ export default function DashboardContainer() {
           },
           (payload) => {
             const newEntry = payload.new as Entry;
-            setUserEntries(prevEntries => [...prevEntries, newEntry]);
-            setCompletedDays(prevDays => prevDays + 1);
+            setUserEntries((prevEntries) => [...prevEntries, newEntry]);
+            setCompletedDays((prevDays) => prevDays + 1);
+          }
+        )
+        // ✅ Add listener for DELETE events
+        .on(
+          "postgres_changes",
+          {
+            event: "DELETE",
+            schema: "public",
+            table: "entries",
+            filter: `user_id=eq.${user.id}`,
+          },
+          (payload) => {
+            const deletedEntry = payload.old as { id: string };
+            setUserEntries((prevEntries) =>
+              prevEntries.filter((entry) => entry.id !== deletedEntry.id)
+            );
+            setCompletedDays((prevDays) => prevDays - 1);
           }
         )
         .subscribe();
@@ -92,7 +109,6 @@ export default function DashboardContainer() {
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Log New Entry
               </h2>
-              {/* ✅ This is the corrected line */}
               <LogEntryForm />
             </div>
             <UserEntries entries={userEntries} />
