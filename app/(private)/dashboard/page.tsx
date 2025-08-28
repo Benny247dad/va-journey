@@ -3,8 +3,9 @@
 export const dynamic = "force-dynamic"; 
 // 👆 This prevents static generation and ensures runtime rendering
 
-import DashboardClient from "@/components/DashboardClient";
+// ✅ Correctly import DashboardContainer
+import DashboardContainer from "@/components/DashboardContainer";
 
 export default function DashboardPage() {
-  return <DashboardClient />;
+  return <DashboardContainer />;
 }
