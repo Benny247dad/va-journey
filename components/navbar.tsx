@@ -28,156 +28,124 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-[998]">
-           {" "}
+    <header className="sticky top-0 z-[998] transition-all duration-300">
       <div className="relative">
-               {" "}
         <motion.nav
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8
-                     h-16 rounded-b-2xl
-                     bg-white/60 dark:bg-gray-900/60 backdrop-blur
-                     border-b border-black/5 dark:border-white/10"
+          className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-16 rounded-b-2xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border-b border-black/5 dark:border-white/10"
         >
-                    {/* Brand */}         {" "}
-          <Link
-            href="/"
-            className="font-semibold tracking-tight text-gray-900 dark:text-white"
-          >
-                        VA<span className="text-indigo-500">Journey</span>     
-               {" "}
+          {/* Brand */}
+          <Link href="/" className="font-semibold tracking-tight text-xl text-gray-900 dark:text-white">
+            VA<span className="text-indigo-500">Journey</span>
           </Link>
-                    {/* Desktop nav */}         {" "}
+
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm">
-                       {" "}
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-gray-700 dark:text-gray-300 transition ${
-                  pathname === item.href
-                    ? "text-indigo-600 dark:text-indigo-400 font-bold"
-                    : "hover:text-indigo-600 dark:hover:text-indigo-400"
-                }`}
+                className={`text-gray-700 dark:text-gray-300 transition-all font-medium hover:text-indigo-600 dark:hover:text-indigo-400
+                  ${pathname === item.href ? "text-indigo-600 dark:text-indigo-400" : ""}`}
               >
-                                {item.label}             {" "}
+                {item.label}
               </Link>
             ))}
-                       {" "}
             {!loading && user && (
               <Link
                 href="/dashboard"
-                className="text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition"
+                className="text-gray-700 font-medium hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-all"
               >
-                                Dashboard              {" "}
+                Dashboard
               </Link>
             )}
-                     {" "}
           </nav>
-                    {/* Right controls */}         {" "}
+
+          {/* Right controls */}
           <div className="flex items-center gap-3">
-                        <ThemeToggle />           {" "}
-            {!loading &&
-              (user ? (
+            <ThemeToggle />
+            {!loading && (
+              user ? (
                 <button
                   onClick={handleSignOut}
-                  className="rounded-lg px-3 py-2 text-sm bg-indigo-500 text-white hover:bg-indigo-600 transition"
+                  className="hidden md:block rounded-lg px-4 py-2 text-sm bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
                 >
-                                    Logout                {" "}
+                  Logout
                 </button>
               ) : (
                 <Link
-                  href="/login" // ✅ Changed from "/auth" to "/login"
-                  className="rounded-lg px-3 py-2 text-sm bg-indigo-500 text-white hover:bg-indigo-600 transition"
+                  href="/login"
+                  className="hidden md:block rounded-lg px-4 py-2 text-sm bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
                 >
-                                    Login                {" "}
+                  Login
                 </Link>
-              ))}
-                       {" "}
+              )
+            )}
             <button
               className="md:hidden rounded-lg p-2 hover:bg-black/5 dark:hover:bg-white/10"
               onClick={() => setOpen((v) => !v)}
               aria-label="Toggle menu"
             >
-                           {" "}
-              {open ? (
-                <HiX className="w-5 h-5 text-gray-900 dark:text-white" />
-              ) : (
-                <HiMenu className="w-5 h-5 text-gray-900 dark:text-white" />
-              )}
-                         {" "}
+              {open ? <HiX className="w-5 h-5 text-gray-900 dark:text-white" /> : <HiMenu className="w-5 h-5 text-gray-900 dark:text-white" />}
             </button>
-                     {" "}
           </div>
-                 {" "}
         </motion.nav>
-               {" "}
+        
+        {/* Mobile menu */}
         <AnimatePresence>
-                   {" "}
           {open && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.18 }}
-              className="md:hidden bg-white/80 dark:bg-gray-900/80 backdrop-blur
-                          border-b border-black/5 dark:border-white/10"
+              className="md:hidden absolute top-16 left-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-black/5 dark:border-white/10"
             >
-                           {" "}
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 grid gap-2">
-                               {" "}
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-2">
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-3 py-2 text-gray-800 hover:bg-black/5
-                                 dark:text-gray-200 dark:hover:bg-white/10 transition"
+                    className="rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                   >
-                                        {item.label}                 {" "}
+                    {item.label}
                   </Link>
                 ))}
-                               {" "}
                 {!loading && Boolean(user) && (
                   <Link
                     href="/dashboard"
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-3 py-2 text-gray-800 hover:bg-black/5
-                                 dark:text-gray-200 dark:hover:bg-white/10 transition"
+                    className="rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                   >
-                                        Dashboard                  {" "}
+                    Dashboard
                   </Link>
                 )}
-                               {" "}
-                {!loading &&
-                  (user ? (
+                {!loading && (
+                  user ? (
                     <button
                       onClick={handleSignOut}
-                      className="rounded-lg px-3 py-2 text-red-600 dark:text-red-400 hover:bg-black/5 dark:hover:bg-white/10 transition text-left"
+                      className="rounded-lg px-3 py-2 text-red-600 dark:text-red-400 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition text-left"
                     >
-                                            Logout                    {" "}
+                      Logout
                     </button>
                   ) : (
                     <Link
-                      href="/login" // ✅ Changed from "/auth" to "/login"
+                      href="/login"
                       onClick={() => setOpen(false)}
-                      className="rounded-lg px-3 py-2 bg-indigo-500 text-white hover:bg-indigo-600 transition text-center"
+                      className="rounded-lg px-3 py-2 bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition text-center"
                     >
-                                            Login                    {" "}
+                      Login
                     </Link>
-                  ))}
-                             {" "}
+                  )
+                )}
               </div>
-                         {" "}
             </motion.div>
           )}
-                 {" "}
         </AnimatePresence>
-             {" "}
       </div>
-         {" "}
     </header>
   );
 }
