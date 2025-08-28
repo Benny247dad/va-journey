@@ -6,7 +6,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeToggle from "./theme-toggle";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/context/AuthProvider";
+import { useAuth } from "@/context/AuthContext"; // ✅ Correct import path
 import { HiMenu, HiX } from "react-icons/hi"; // You'll need to install react-icons
 
 const navItems = [

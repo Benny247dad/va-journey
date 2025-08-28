@@ -17,14 +17,12 @@ interface Entry {
 }
 
 export default function DashboardClient() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth(); // Removed 'loading' since ProtectedRoute handles it
   const [completedDays, setCompletedDays] = useState(0);
   const [userEntries, setUserEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
-    // This check prevents the code from running when user is null.
     if (user) {
-      // Fetch the total number of completed days for the progress bar.
       const fetchCompletedDays = async () => {
         const { count } = await supabase
           .from("entries")
@@ -33,7 +31,6 @@ export default function DashboardClient() {
         setCompletedDays(count || 0);
       };
 
-      // Fetch the user's entries to display in the list.
       const fetchUserEntries = async () => {
         const { data } = await supabase
           .from("entries")
@@ -48,11 +45,8 @@ export default function DashboardClient() {
     }
   }, [user]);
 
-  // This function is passed to the LogEntryForm to update the UI after a new entry is logged.
   const handleEntryLogged = async () => {
-    // This check is also crucial to prevent errors.
     if (user) {
-      // Re-fetch the entries to update the list.
       const { data } = await supabase
         .from("entries")
         .select("id, created_at, day, title, description")
@@ -60,22 +54,12 @@ export default function DashboardClient() {
         .eq("user_id", user.id);
       setUserEntries(data as Entry[] || []);
 
-      // Update the completed days count.
       setCompletedDays(prev => prev + 1);
     }
   };
 
-  // Show a loading screen or redirect if the user is not authenticated.
-  if (loading || !user) {
-    return (
-      <ProtectedRoute>
-        <div className="flex justify-center items-center min-h-screen">
-          <p>Loading...</p>
-        </div>
-      </ProtectedRoute>
-    );
-  }
-
+  // ✅ The ProtectedRoute component is now used to wrap the content.
+  // It will handle all the loading and authentication checks internally.
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-100 py-12 dark:bg-gray-950 dark:text-gray-200">

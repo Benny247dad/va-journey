@@ -17,7 +17,7 @@ interface Entry {
 }
 
 export default function DashboardContainer() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth(); // `loading` is handled by ProtectedRoute
   const [completedDays, setCompletedDays] = useState(0);
   const [userEntries, setUserEntries] = useState<Entry[]>([]);
 
@@ -40,7 +40,7 @@ export default function DashboardContainer() {
           .select("id, created_at, day, title, description")
           .order("day", { ascending: true })
           .eq("user_id", user.id);
-        setUserEntries(data as Entry[] || []);
+        setUserEntries((data as Entry[]) || []);
       };
 
       fetchCompletedDays();
@@ -57,23 +57,15 @@ export default function DashboardContainer() {
         .select("id, created_at, day, title, description")
         .order("day", { ascending: true })
         .eq("user_id", user.id);
-      setUserEntries(data as Entry[] || []);
+      setUserEntries((data as Entry[]) || []);
 
       // Update the completed days count.
-      setCompletedDays(prev => prev + 1);
+      setCompletedDays((prev) => prev + 1);
     }
   };
 
-  if (loading || !user) {
-    return (
-      <ProtectedRoute>
-        <div className="flex justify-center items-center min-h-screen">
-          <p>Loading...</p>
-        </div>
-      </ProtectedRoute>
-    );
-  }
-
+  // ✅ The ProtectedRoute component is now used to wrap the content.
+  // It will handle all the loading and authentication checks internally.
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-100 py-12 dark:bg-gray-950 dark:text-gray-200">
@@ -82,6 +74,7 @@ export default function DashboardContainer() {
             My Dashboard
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Progress Visualization */}
             <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Progress
@@ -91,6 +84,7 @@ export default function DashboardContainer() {
                 You have completed **{completedDays}** of your 100-day journey!
               </p>
             </div>
+            {/* Log Entry Form and User Entries */}
             <div className="bg-white p-8 rounded-xl shadow-lg dark:bg-gray-900">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Log New Entry
