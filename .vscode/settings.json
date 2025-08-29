@@ -1,5 +1,0 @@
-{
-  "css.customData": [
-    "./node_modules/tailwindcss/vscode-extension/dist/css-custom-data.json"
-  ]
-}
