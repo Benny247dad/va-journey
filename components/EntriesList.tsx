@@ -1,76 +1,28 @@
 // components/EntriesList.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { Database } from "@/types/supabase";
 
-interface Entry {
-  id: string;
-  day_number: number;
-  title: string;
-  description: string;
-  created_at: string;
+type Entry = Omit<Database['public']['Tables']['entries']['Row'], 'created_at'> & { created_at: string | null };
+
+interface EntriesListProps {
+  entries: Entry[];
+  onDelete: (entryId: string) => void;
 }
 
-export default function EntriesList() {
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClientComponentClient();
-
-  useEffect(() => {
-    const fetchEntries = async () => {
-      setLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        setLoading(false);
-        return;
-      }
-      
-      const { data, error } = await supabase
-        .from("entries")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .order("day_number", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching entries:", error);
-        toast.error("Failed to load entries.");
-        setLoading(false);
-        return;
-      }
-      
-      setEntries(data as Entry[]);
-      setLoading(false);
-    };
-
-    fetchEntries();
-  }, [supabase]);
+export default function EntriesList({ entries: initialEntries, onDelete }: EntriesListProps) {
+  const [entries, setEntries] = useState<Entry[]>(initialEntries);
 
   const handleDelete = async (entryId: string) => {
-    const { error } = await supabase.from("entries").delete().eq("id", entryId);
-
-    if (error) {
-      console.error("Error deleting entry:", error);
-      toast.error("Failed to delete entry.");
-      return;
-    }
-    
+    onDelete(entryId);
+    // Update local state to remove the deleted entry immediately
     setEntries(entries.filter((entry) => entry.id !== entryId));
-    toast.success("Entry deleted successfully!");
   };
-
-  if (loading) {
-    return (
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 text-center">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">My Entries</h2>
-        <p className="text-gray-500 dark:text-gray-400">Loading entries...</p>
-      </div>
-    );
-  }
 
   return (
     <motion.div
@@ -98,14 +50,16 @@ export default function EntriesList() {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-lg font-bold mb-1 text-gray-900 dark:text-white">
-                      Day {entry.day_number}: {entry.title}
+                      {entry.title}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                      {new Date(entry.created_at).toLocaleDateString()}
+                      {entry.created_at ? new Date(entry.created_at).toLocaleDateString() : 'No date'}
                     </p>
-                    <p className="text-gray-700 dark:text-gray-300">
-                      {entry.description}
-                    </p>
+                    {entry.description && (
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {entry.description}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2 text-gray-400">
                     <button className="hover:text-indigo-600 transition-colors" aria-label="Edit entry">
