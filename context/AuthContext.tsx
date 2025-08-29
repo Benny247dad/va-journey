@@ -17,6 +17,7 @@ import { Database } from "@/types/supabase";
 interface AuthContextType {
   user: Session["user"] | null;
   loading: boolean;
+  signOut: () => Promise<void>; // ✅ add signOut
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,17 +32,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      // This listener runs every time the auth state changes (e.g., login, logout)
       setUser(session?.user ?? null);
       setLoading(false);
 
       if (event === "SIGNED_OUT") {
-        // Redirect to the home page on sign out
         router.push("/");
       }
     });
 
-    // Initial check for the user session
     async function getUserSession() {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
@@ -55,8 +53,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [router, supabase.auth]);
 
+  // ✅ implement signOut
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, signOut: handleSignOut }}>
       {children}
     </AuthContext.Provider>
   );
