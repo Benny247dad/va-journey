@@ -1,15 +1,27 @@
+// app/(auth)/layout.tsx
 import { ReactNode } from "react";
-import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import DashboardNavbar from "@/components/DashboardNavbar";
 
-export const metadata: Metadata = {
-  title: "Authentication",
-  description: "Login or sign up to access your VA Journey dashboard.",
-};
+interface AuthLayoutProps {
+  children: ReactNode;
+}
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+export default async function AuthLayout({ children }: AuthLayoutProps) {
+  const supabase = createServerComponentClient({ cookies });
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // Redirect unauthenticated users to the login page
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-950">
-      {children}
-    </div>
+    <>
+      <DashboardNavbar />
+      <main className="flex-grow">{children}</main>
+    </>
   );
 }

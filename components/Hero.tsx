@@ -28,7 +28,7 @@ export default function Hero() {
 
       <Reveal direction="up" delay={0.4}>
         <h6 className="text-3xl font-semibold mb-2">
-          An Aspiring Data Scientist | Virtual Assistant | Problem Solver
+          An Aspiring Virtual Assistant | Data Scientist | Problem Solver
         </h6>
       </Reveal>
       <Reveal direction="up" delay={0.6}>

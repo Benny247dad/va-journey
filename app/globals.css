@@ -112,6 +112,20 @@
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
+/* Custom scrollbar for entries list */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #e5e7eb; /* dark: #1f2937 */
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #9ca3af; /* dark: #6b7280 */
+  border-radius: 10px;
+  border: 2px solid #e5e7eb; /* dark: #1f2937 */
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
