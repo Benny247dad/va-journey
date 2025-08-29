@@ -2,21 +2,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { Database } from "@/types/supabase";
+
+type Entry = Database['public']['Tables']['entries']['Row'];
 
 const totalDays = 100;
 
-export default function ProgressChart() {
-  const [currentDay, setCurrentDay] = useState(0);
+interface ProgressChartProps {
+  entries: Entry[];
+}
 
-  useEffect(() => {
-    // This is a placeholder. In a real application, you would fetch the user's progress from your database here.
-    // For now, let's use a mock value.
-    const mockCurrentDay = 45; // Placeholder
-    setCurrentDay(mockCurrentDay);
-  }, []);
+export default function ProgressChart({ entries }: ProgressChartProps) {
+  const currentDay = entries.length; // ✅ Get the current day from the number of entries
 
   const progressPercentage = (currentDay / totalDays) * 100;
   const daysRemaining = totalDays - currentDay;

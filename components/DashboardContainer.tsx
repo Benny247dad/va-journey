@@ -4,19 +4,24 @@
 import { motion } from "framer-motion";
 import { FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import ProgressChart from "./ProgressChart";
-import EntryForm from "./EntryForm";
+import NewEntryForm from "./NewEntryForm"; // Changed name to match your file
 import EntriesList from "./EntriesList";
+import { Database } from "@/types/supabase";
 
-export default function DashboardContainer() {
+type Entry = Database['public']['Tables']['entries']['Row'];
+
+interface DashboardContainerProps {
+  entries: Entry[];
+}
+
+export default function DashboardContainer({ entries }: DashboardContainerProps) {
   const router = useRouter();
 
   return (
     <main className="min-h-screen bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          {/* Back Button */}
           <motion.button
             onClick={() => router.back()}
             whileHover={{ scale: 1.1 }}
@@ -27,7 +32,7 @@ export default function DashboardContainer() {
             <FaArrowLeft className="w-6 h-6" />
           </motion.button>
           
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -35,10 +40,8 @@ export default function DashboardContainer() {
           >
             My Dashboard
           </motion.h1>
-          <div className="w-10"></div> {/* Spacer to balance the back button */}
+          <div className="w-10"></div>
         </div>
-
-        {/* Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -46,7 +49,7 @@ export default function DashboardContainer() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="col-span-1 md:col-span-1 lg:col-span-1"
           >
-            <ProgressChart />
+            <ProgressChart entries={entries} />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -54,17 +57,16 @@ export default function DashboardContainer() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="col-span-1 md:col-span-1 lg:col-span-2"
           >
-            <EntryForm />
+            <NewEntryForm />
           </motion.div>
         </div>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="mt-8"
         >
-          <EntriesList />
+          <EntriesList entries={entries} />
         </motion.div>
       </div>
     </main>

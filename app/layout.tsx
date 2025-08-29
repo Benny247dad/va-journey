@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: "VA Journey",
     description:
       "Log your 100-day journey to becoming a professional Virtual Assistant.",
-    creator: "@yourtwitterhandle",
+    creator: "@Benny_king6",
     images: "/images/og-image.png",
   },
   robots: {

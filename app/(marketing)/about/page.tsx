@@ -1,12 +1,11 @@
 // app/(marketing)/about/page.tsx
 
-import AboutPageContainer from "@/components/AboutPageContainer";
 import { Metadata } from "next";
+import AboutPageContainer from "@/components/AboutPageContainer";
 
-// ✅ SEO: Metadata for the About Page
 export const metadata: Metadata = {
-  title: "VA Journey | About Dayo",
-  description: "Meet Dayo, the creator behind the 100-day VA journey. Learn why this project started and where it’s heading.",
+  title: "About Dayo | My Story",
+  description: "Learn about my background, motivations, and the goals of my 100-day VA journey.",
 };
 
 export default function AboutPage() {

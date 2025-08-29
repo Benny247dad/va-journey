@@ -1,4 +1,4 @@
-// components/hero.tsx
+// components/Hero.tsx
 "use client";
 
 import Image from "next/image";
@@ -21,19 +21,22 @@ export default function Hero() {
         </Reveal>
         <Reveal direction="up" delay={0.2}>
           <h1 className="text-5xl font-bold mt-4">
-            Hello, I&apos;m Dayo.
+            Follow My 100-Day Journey
           </h1>
         </Reveal>
       </div>
 
       <Reveal direction="up" delay={0.4}>
         <h6 className="text-3xl font-semibold mb-2">
-          An Aspiring Virtual Assistant | Data Scientist | Problem Solver
+          Becoming a Skilled Virtual Assistant
         </h6>
       </Reveal>
+
       <Reveal direction="up" delay={0.6}>
         <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto dark:text-gray-400">
-          Tracking my 100-day journey of growth, consistency, and projects to become a professional Virtual Assistant.
+          I’m documenting my growth step by step—sharing lessons, wins, and
+          setbacks. Whether you’re curious about virtual assistants or walking
+          the same path, this space is for you.
         </p>
       </Reveal>
 

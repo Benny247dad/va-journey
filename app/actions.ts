@@ -1,3 +1,4 @@
+// app/actions.ts
 "use server";
 
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -8,10 +9,10 @@ import { z } from "zod";
 const formSchema = z.object({
   title: z.string().min(3),
   description: z.string().min(10),
-  day: z.number().int().min(1).max(100),
+  day: z.coerce.number().int().min(1).max(100), // ✅ z.coerce.number() to handle the string conversion
 });
 
-export async function logEntryAction(data: z.infer<typeof formSchema>) {
+export async function addEntryAction(formData: FormData) { // ✅ Accept FormData directly
   const supabase = createServerComponentClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -19,12 +20,23 @@ export async function logEntryAction(data: z.infer<typeof formSchema>) {
     return { error: "You must be logged in to log an entry." };
   }
 
+  // ✅ Extract data from FormData
+  const result = formSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+    day: formData.get("day"),
+  });
+
+  if (!result.success) {
+    return { error: result.error.issues[0].message };
+  }
+
   const { error } = await supabase
     .from("entries")
     .insert({
-      title: data.title,
-      description: data.description,
-      day: data.day,
+      title: result.data.title,
+      description: result.data.description,
+      day: result.data.day,
       user_id: user.id,
     });
 
@@ -33,13 +45,18 @@ export async function logEntryAction(data: z.infer<typeof formSchema>) {
     return { error: error.message };
   }
 
-  // Revalidate the dashboard page to show the new entry
   revalidatePath("/dashboard");
   return { success: true };
 }
 
-// ✅ New Server Action to delete an entry
-export async function deleteEntryAction(entryId: string) {
+// ✅ Corrected `deleteEntryAction`
+export async function deleteEntryAction(formData: FormData) { // ✅ Accept FormData directly
+  const entryId = formData.get("entryId") as string;
+  
+  if (!entryId) {
+    return { error: "Entry ID is missing." };
+  }
+
   const supabase = createServerComponentClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -47,7 +64,6 @@ export async function deleteEntryAction(entryId: string) {
     return { error: "You must be logged in to delete an entry." };
   }
 
-  // Delete the entry, but only if the user_id matches the current user's ID
   const { error } = await supabase
     .from("entries")
     .delete()
@@ -59,5 +75,6 @@ export async function deleteEntryAction(entryId: string) {
     return { error: error.message };
   }
 
+  revalidatePath("/dashboard");
   return { success: true };
 }

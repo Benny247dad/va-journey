@@ -1,6 +1,16 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* app/globals.css */
 
+/* REQUIRED TAILWIND CSS DIRECTIVES - MUST BE AT THE TOP */
+@import "tailwindcss/preflight";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* ------------------------------------------------------------- */
+/* Custom Theming and CSS Variables (from your provided code)    */
+/* ------------------------------------------------------------- */
+
+/* You might need a PostCSS plugin or specific config for these custom at-rules */
+/* If these cause issues, and you don't have a specific plugin for them, you might need to remove them */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -134,6 +144,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* External CSS Libraries (if needed) */
+@import "tw-animate-css"; /* Ensure this path is correct if it's a local file or from node_modules */
+
 html {
   scroll-behavior: smooth;
 }
